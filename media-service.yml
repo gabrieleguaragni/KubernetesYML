@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-service
+  namespace: app-namespace
+spec:
+  selector:
+    app: media-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80

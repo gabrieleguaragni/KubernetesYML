@@ -1,0 +1,51 @@
+# https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
+# https://kubernetes.github.io/ingress-nginx/examples/rewrite/#examples
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.3/deploy/static/provider/cloud/deploy.yaml 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: app-namespace
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /adminer
+        pathType: Prefix
+        backend:
+          service:
+            name: adminer-service
+            port:
+              name: http
+      - path: /auth-api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: auth-service
+            port:
+              name: http         
+      - path: /media-api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: media-service
+            port:
+              name: http    
+      - path: /operation-api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: operation-service
+            port:
+              name: http  
+      - path: /notification-api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: notification-service
+            port:
+              name: http    

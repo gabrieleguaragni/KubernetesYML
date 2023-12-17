@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-deployment
+  namespace: app-namespace
+  labels:
+    app: mssql-app
+spec:
+  selector:
+    matchLabels:
+      app: mssql-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mssql-app
+    spec:
+      containers:
+      - name: mssql-container
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Developer"
+        - name: MSSQL_SA_PASSWORD
+          value: "p4ssw0rD"
+        volumeMounts:
+        - name: mssqldb
+          mountPath: /var/opt/mssql
+        resources:
+          requests:
+            memory: 1Gi
+            cpu: 250m
+          limits:
+            memory: 4Gi
+            cpu: 2000m
+      volumes:
+      - name: mssqldb
+        persistentVolumeClaim:
+          claimName: mssql-data

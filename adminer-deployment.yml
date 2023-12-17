@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer-deployment
+  namespace: app-namespace
+  labels:
+    app: adminer-app
+spec:
+  selector:
+    matchLabels:
+      app: adminer-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: adminer-app
+    spec:
+      containers:
+      - name: adminer-container
+        image: adminer:4.8.1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TZ
+          value: Europe/Rome
+        - name: ADMINER_DEFAULT_SERVER
+          value: mssql-service
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 10m
+          limits:
+            memory: 256Mi
+            cpu: 1000m

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-deployment
+  namespace: app-namespace
+  labels:
+    app: media-app
+spec:
+  selector:
+    matchLabels:
+      app: media-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: media-app
+    spec:
+      containers:
+      - name: media-container
+        image: ghcr.io/gabrieleguaragni/media-service
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        volumeMounts:
+        - name: media-configmap-volume
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
+        - name: media-volume
+          mountPath: /app/images/
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 500m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+      volumes:
+      - name: media-configmap-volume
+        configMap:
+          name: media-configmap
+      - name: media-volume
+        persistentVolumeClaim:
+          claimName: media-data

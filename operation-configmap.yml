@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: operation-configmap
+  namespace: app-namespace
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "DefaultConnection": "Server=mssql-service;Database=S2_Operation;User Id=sa;Password=p4ssw0rD;Encrypt=False"
+      },
+      "AuthApiClient": {
+        "BaseAddress": "http://auth-service",
+        "ValidateToken": "/auth/validate-token"
+      },
+      "Kafka": {
+        "BootstrapServers": "kafka-cluster:9092",
+        "SendPost": {
+          "GroupId": "send-post-group",
+          "Topic": "send-post-topic"
+        },
+        "SendNotification": {
+          "GroupId": "send-notification-group",
+          "Topic": "send-notification-topic"
+        }
+      }
+    }

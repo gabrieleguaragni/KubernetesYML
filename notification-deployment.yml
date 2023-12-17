@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-deployment
+  namespace: app-namespace
+  labels:
+    app: notification-app
+spec:
+  selector:
+    matchLabels:
+      app: notification-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: notification-app
+    spec:
+      containers:
+      - name: notification-container
+        image: ghcr.io/gabrieleguaragni/notification-service
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        volumeMounts:
+        - name: notification-configmap-volume
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 500m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+      volumes:
+      - name: notification-configmap-volume
+        configMap:
+          name: notification-configmap

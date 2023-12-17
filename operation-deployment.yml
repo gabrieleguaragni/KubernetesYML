@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operation-deployment
+  namespace: app-namespace
+  labels:
+    app: operation-app
+spec:
+  selector:
+    matchLabels:
+      app: operation-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: operation-app
+    spec:
+      containers:
+      - name: operation-container
+        image: ghcr.io/gabrieleguaragni/operation-service
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        volumeMounts:
+        - name: operation-configmap-volume
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 500m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+      volumes:
+      - name: operation-configmap-volume
+        configMap:
+          name: operation-configmap

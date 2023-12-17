@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  namespace: app-namespace
+  labels:
+    app: auth-app
+spec:
+  selector:
+    matchLabels:
+      app: auth-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth-app
+    spec:
+      containers:
+      - name: auth-container
+        image: ghcr.io/gabrieleguaragni/auth-service
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        volumeMounts:
+        - name: auth-configmap-volume
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 500m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+      volumes:
+      - name: auth-configmap-volume
+        configMap:
+          name: auth-configmap
